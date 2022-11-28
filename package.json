@@ -3,6 +3,22 @@
   "displayName": "Url Highlighter",
   "description": "Get your url search params highlighted",
   "version": "0.0.1",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/themashcodee/url-highlighter-vscode-extension.git"
+  },
+  "keywords": [
+    "url highlighter",
+    "url search params parser",
+    "url search params highlighter",
+    "url search query highlighter"
+  ],
+  "bugs": {
+    "url": "https://github.com/themashcodee/url-highlighter-vscode-extension/issues"
+  },
+  "homepage": "https://github.com/themashcodee/url-highlighter-vscode-extension#readme",
+  "author": "Mash Codee <codeemash@gmai.com>",
   "engines": {
     "vscode": "^1.73.0"
   },
