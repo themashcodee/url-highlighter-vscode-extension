@@ -1,6 +1,20 @@
 import * as vscode from "vscode"
 
-export const decorationType = vscode.window.createTextEditorDecorationType({
-	backgroundColor: "rgba(124, 69, 245)",
-	color: "rgba(255, 255, 255, 1)",
-})
+export const decorations = {
+	link: vscode.window.createTextEditorDecorationType({
+		backgroundColor: "#222222",
+		textDecoration: "none",
+	}),
+	base_url: vscode.window.createTextEditorDecorationType({
+		color: "#777777",
+	}),
+	params_key: vscode.window.createTextEditorDecorationType({
+		color: "#FEFFCD",
+	}),
+	params_value: vscode.window.createTextEditorDecorationType({
+		color: "#B698F5",
+	}),
+	characters: vscode.window.createTextEditorDecorationType({
+		color: "#777777",
+	}),
+}

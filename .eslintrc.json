@@ -9,8 +9,6 @@
         "@typescript-eslint"
     ],
     "rules": {
-        "@typescript-eslint/naming-convention": "warn",
-        "curly": "error",
         "eqeqeq": "error",
         "no-throw-literal": "warn",
         "semi": "off"

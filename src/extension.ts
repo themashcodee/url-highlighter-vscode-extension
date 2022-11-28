@@ -1,60 +1,89 @@
 import * as vscode from "vscode"
-import { decorationType } from "./decorator"
-import { getParamsFromUrl, jsonToString } from "./helpers"
-
-const colorizeUrls = (editor: vscode.TextEditor, text: string): void => {
-	if (!text.includes("http")) {
-		editor.setDecorations(decorationType, [])
-		return
-	}
-
-	const urlRegex = /(https?:\/\/[^\s,',"]+)/g
-	const matches = [...text.matchAll(urlRegex)]
-
-	const ranges = matches.map((match) => {
-		const index = match.index ?? 0
-		const [url] = match
-		const startPos = editor.document.positionAt(index)
-		const endPos = editor.document.positionAt(index + url.length)
-
-		const content = new vscode.MarkdownString(
-			`<p><b>URL Params</b>\n\n<code>${jsonToString(
-				getParamsFromUrl(url)
-			)}</code></p>`
-		)
-		content.supportHtml = true
-
-		content.isTrusted = true
-		return {
-			range: new vscode.Range(startPos, endPos),
-			hoverMessage: content,
-		} as vscode.DecorationOptions
-	})
-
-	editor.setDecorations(decorationType, ranges)
-}
+import { decorations } from "./decorator"
+import { getBaseUrlRange, getParamsFromUrl, getParamsRange } from "./helpers"
 
 export function activate(context: vscode.ExtensionContext) {
-	const editor = vscode.window.activeTextEditor
+	const highlighDisposable = vscode.commands.registerCommand(
+		"extension.highlightUrl",
+		() => {
+			try {
+				const editor = vscode.window.activeTextEditor
+				if (!editor) return
+				if (editor.selection.isEmpty) {
+					vscode.window.showErrorMessage("Please select an url")
+					return
+				}
 
-	if (editor) {
-		colorizeUrls(editor, editor.document.getText())
-	}
+				const startPo = editor.selection.start
+				const endPo = editor.selection.end
+				const url = editor.document.getText(new vscode.Range(startPo, endPo))
 
-	vscode.window.onDidChangeActiveTextEditor((editor) => {
-		if (editor) {
-			colorizeUrls(editor, editor.document.getText())
+				if (!url.includes("http")) {
+					vscode.window.showErrorMessage("Please select an valid url")
+					return
+				}
+
+				// SHOW OBJECT ON HOVER
+				const paramsJson = getParamsFromUrl(url)
+				const content = new vscode.MarkdownString(
+					`<div><b>URL Params</b> (copied to your clipboard 🚀)\n\n<pre><code>${paramsJson}</code></pre></div>`
+				)
+				content.supportHtml = true
+				content.isTrusted = true
+
+				// COPYING PARAMS JSON TO CLIPBOARD
+				vscode.env.clipboard.writeText(paramsJson)
+
+				// SETTING BACKGROUND COLOR TO URL
+				const linkRange = [
+					{
+						range: new vscode.Range(startPo, endPo),
+						hoverMessage: content,
+					} as vscode.DecorationOptions,
+				]
+				editor.setDecorations(decorations.link, linkRange)
+
+				// SETTING COLOR TO BASE URL
+				const baseUrlRange = getBaseUrlRange({
+					end: endPo,
+					start: startPo,
+					url,
+				})
+				editor.setDecorations(decorations.base_url, baseUrlRange)
+
+				// SETTING COLOR TO PARAMS
+				const paramsRange = getParamsRange({
+					end: endPo,
+					start: startPo,
+					url,
+				})
+				editor.setDecorations(decorations.params_key, paramsRange.keys)
+				editor.setDecorations(decorations.params_value, paramsRange.values)
+				editor.setDecorations(decorations.characters, paramsRange.characters)
+			} catch (err) {
+				vscode.window.showErrorMessage(
+					"Something went wrong. Please try again."
+				)
+			}
 		}
-	})
+	)
 
-	vscode.workspace.onDidChangeTextDocument((event) => {
-		const editor = vscode.window.activeTextEditor
-		if (editor) {
-			colorizeUrls(editor, event.document.getText())
+	const unhighlightDisposable = vscode.commands.registerCommand(
+		"extension.unhighlightUrl",
+		() => {
+			const editor = vscode.window.activeTextEditor
+			if (!editor) return
+			editor.setDecorations(decorations.link, [])
+			editor.setDecorations(decorations.characters, [])
+			editor.setDecorations(decorations.base_url, [])
+			editor.setDecorations(decorations.params_key, [])
+			editor.setDecorations(decorations.params_value, [])
 		}
-	})
+	)
+
+	context.subscriptions.push(highlighDisposable)
+	context.subscriptions.push(unhighlightDisposable)
 }
-
 export function deactivate() {
 	console.log("URL Highlighter deactivated!")
 }
