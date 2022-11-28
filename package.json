@@ -4,6 +4,7 @@
   "description": "Get your url search params highlighted",
   "version": "0.0.1",
   "license": "MIT",
+  "publisher": "MashCodee",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/themashcodee/url-highlighter-vscode-extension.git"
