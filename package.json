@@ -2,7 +2,7 @@
   "name": "url-highlighter",
   "displayName": "Url Highlighter",
   "description": "Get your url search params highlighted",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "license": "MIT",
   "publisher": "MashCodee",
   "repository": {
