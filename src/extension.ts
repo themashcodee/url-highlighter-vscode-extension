@@ -19,7 +19,7 @@ export function activate(context: vscode.ExtensionContext) {
 				const url = editor.document.getText(new vscode.Range(startPo, endPo))
 
 				if (!url.includes("http")) {
-					vscode.window.showErrorMessage("Please select an valid url")
+					vscode.window.showErrorMessage("Url should have http or https")
 					return
 				}
 

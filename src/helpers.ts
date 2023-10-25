@@ -2,7 +2,7 @@ import * as vscode from "vscode"
 import { parse } from "qs"
 
 export const getParamsFromUrl = (url: string) => {
-	const params = url.split("?")[1]
+	const params = url.split("?").splice(1).join("?")
 	if (!params) return JSON.stringify({}, null, 4)
 	return JSON.stringify(parse(params), null, 4)
 }
