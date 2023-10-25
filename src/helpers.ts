@@ -41,7 +41,9 @@ export function getParamsRange(params: Payload) {
 	const characters: vscode.DecorationOptions[] = []
 
 	queries.forEach((query) => {
-		const [key, value] = query.split("=")
+		const key = query.split("=")[0]
+		const value  = query.split("=").splice(1).join("=")
+
 		const keyStartPos = start.with(
 			start.line,
 			start.character + url.indexOf(key)
