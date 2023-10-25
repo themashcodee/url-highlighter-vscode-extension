@@ -34,7 +34,7 @@ export function getParamsRange(params: Payload) {
 		}
 	}
 
-	const paramsString = url.split("?")[1]
+	const paramsString =url.split("?").splice(1).join("?")
 	const queries = paramsString.split("&")
 	const keys: vscode.DecorationOptions[] = []
 	const values: vscode.DecorationOptions[] = []
